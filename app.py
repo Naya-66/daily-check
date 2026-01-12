@@ -6,8 +6,8 @@ import os
 # --- 1. 基础配置 ---
 st.set_page_config(page_title="干啥啥都行组打卡", page_icon="🍞", layout="wide")
 
-# 使用 v6 文件名以彻底避免旧数据干扰
-DATA_FILE = "checkin_data_v6.csv"
+# 使用 v7 文件名确保全新的开始
+DATA_FILE = "checkin_data_v7.csv"
 
 def init_data():
     if not os.path.exists(DATA_FILE):
@@ -21,30 +21,36 @@ def get_data():
     except:
         return pd.DataFrame(columns=["ID", "日期", "打卡人", "积分", "罚金", "详情", "兑换次数"])
 
-st.title("🍞 干啥啥都行组")
+# --- 2. 界面头部 ---
+st.title("🍞 干啥啥都行组自律系统 V7.0")
 st.markdown("---")
 
-# --- 2. 侧边栏 ---
-with st.sidebar:
-    st.header("👤 个人中心")
-    user = st.radio("选择打卡人：", ["刘蓝溪", "曾润姿"])
-    st.divider()
-    st.info("📌 核心规则：\n- 11:00前到岗: +2 / 晚到: -2\n- 学习>=3h: +3 / 否则: -3\n- 体重达标: +1 / 否则: -1\n- 凌晨1:00后睡: 罚2元")
+# 将打卡人选择直接放在主界面上，不再隐藏在侧边栏
+st.subheader("👤 第一步：请选择打卡人")
+user = st.radio(
+    "是谁在打卡？", 
+    ["刘蓝溪", "曾润姿"], 
+    horizontal=True, # 横向排列，更美观
+    label_visibility="collapsed" # 隐藏多余标签
+)
+
+st.markdown("---")
 
 # --- 3. 打卡表单 ---
-with st.expander("➕ 开启今日打卡", expanded=True):
-    with st.form("checkin_form", clear_on_submit=True):
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("**日常作息**")
-            is_early = st.checkbox("昨晚 1:00 前睡觉 (未做到罚 2 元 💸)")
-            is_weight = st.checkbox("今日体重管理达标 (做到 +1 / 否则 -1 ⚖️)")
-            arrival_time = st.time_input("到工位时间 (11:00之前到 +2 / 晚于11:00扣2 ⏰)", value=time(10, 0))
-        with col2:
-            st.markdown("**任务达成**")
-            study_hours = st.number_input("有效学习时长 (满 3h +3 / 不满 -3 📚)", min_value=0.0, step=0.5)
-        
-        submit = st.form_submit_button("提交数据")
+st.subheader("📝 第二步：录入今日数据")
+with st.form("checkin_form", clear_on_submit=True):
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**📅 日常生活**")
+        is_early = st.checkbox("昨晚 1:00 前睡觉 (未做到罚 2 元 💸)")
+        is_weight = st.checkbox("今日体重管理达标 (做到 +1 / 否则 -1 ⚖️)")
+        # 默认时间设为 10:00
+        arrival_time = st.time_input("到工位时间 (11:00之前到 +2 / 之后到 -2 ⏰)", value=time(10, 0))
+    with col2:
+        st.markdown("**📖 学习进阶**")
+        study_hours = st.number_input("有效学习时长 (满 3h +3 / 不满 -3 📚)", min_value=0.0, step=0.5)
+    
+    submit = st.form_submit_button("确认提交并计算积分", use_container_width=True)
 
 # --- 4. 计算逻辑 ---
 if submit:
@@ -58,29 +64,29 @@ if submit:
     else: 
         details.append("早睡")
     
-    # 2. 加扣分项：工位时间 (修正逻辑：11:00之前包含11:00)
+    # 2. 工位时间逻辑：11:00之前（含）加2，否则扣2
     if arrival_time <= time(11, 0): 
         points += 2
-        details.append(f"{arrival_time.strftime('%H:%M')}到位(+2)")
+        details.append(f"{arrival_time.strftime('%H:%M')}到岗(+2)")
     else: 
         points -= 2
         details.append(f"{arrival_time.strftime('%H:%M')}晚到(-2)")
         
-    # 3. 加扣分项：学习时间
+    # 3. 学习时间
     if study_hours >= 3: 
         points += 3
-        details.append("学习满3h(+3)")
+        details.append("学习≥3h(+3)")
     else: 
         points -= 3
-        details.append("学习不满3h(-3)")
+        details.append("学习不足(-3)")
         
-    # 4. 加扣分项：体重
+    # 4. 体重
     if is_weight: 
         points += 1
         details.append("体重达标(+1)")
     else: 
         points -= 1
-        details.append("体重不达标(-1)")
+        details.append("体重未达标(-1)")
 
     # 保存数据
     all_data = get_data()
@@ -98,12 +104,13 @@ if submit:
     
     new_row.to_csv(DATA_FILE, mode='a', header=False, index=False)
     st.balloons()
-    st.success(f"提交成功！今日积分变化：{points}，罚金：{fine} 元")
+    st.success(f"打卡成功！{user} 今日积分：{points}，罚金：{fine} 元")
     st.rerun()
 
-# --- 5. 累计看板 ---
+# --- 5. 累计成就榜 ---
 all_data = get_data()
-st.divider()
+st.markdown("---")
+st.subheader("🏆 累计成就与面包进度")
 
 c1, c2 = st.columns(2)
 for i, name in enumerate(["刘蓝溪", "曾润姿"]):
@@ -115,28 +122,28 @@ for i, name in enumerate(["刘蓝溪", "曾润姿"]):
         st.metric(label=f"👤 {name}", value=f"{pts} 分", delta=f"累计兑换 {reds} 次")
         
         if pts >= 20:
-            if st.button(f"🎁 {name} 兑换面包 (需20分)", key=f"rd_{name}"):
+            if st.button(f"🎁 {name} 兑换面包 (-20分)", key=f"rd_{name}", use_container_width=True):
                 rid = int(all_data["ID"].max() + 1) if not all_data.empty else 1
-                r_row = pd.DataFrame([[rid, datetime.now().strftime("%Y-%m-%d %H:%M"), name, -20, 0, "兑换面包", 1]], 
+                r_row = pd.DataFrame([[rid, datetime.now().strftime("%Y-%m-%d %H:%M"), name, -20, 0, "兑换奖励", 1]], 
                                      columns=["ID", "日期", "打卡人", "积分", "罚金", "详情", "兑换次数"])
                 r_row.to_csv(DATA_FILE, mode='a', header=False, index=False)
-                st.success("兑换成功，积分已扣除！")
+                st.success("兑换成功！")
                 st.rerun()
 
-# --- 6. 明细管理 ---
-st.divider()
-t_list, t_admin = st.tabs(["📊 历史明细", "🛠️ 管理后台"])
+# --- 6. 历史数据与管理 ---
+st.markdown("---")
+tab_list, tab_admin = st.tabs(["📊 历史明细", "🛠️ 管理后台"])
 
-with t_list:
+with tab_list:
     if not all_data.empty:
         st.dataframe(all_data.sort_values(by="ID", ascending=False), use_container_width=True)
     else:
-        st.write("还没有打卡记录哦~")
+        st.write("目前还没有数据记录。")
 
-with t_admin:
+with tab_admin:
     target_id = st.number_input("请输入想要删除的记录 ID", min_value=1, step=1)
     if st.button("确认删除该记录", type="primary"):
         updated_df = all_data[all_data["ID"] != target_id]
         updated_df.to_csv(DATA_FILE, index=False)
-        st.warning(f"ID {target_id} 已被删除")
+        st.warning(f"ID {target_id} 已从记录中移除")
         st.rerun()
