@@ -22,7 +22,7 @@ def get_data():
         return pd.DataFrame(columns=["ID", "日期", "打卡人", "积分", "罚金", "详情", "兑换次数"])
 
 # --- 2. 界面头部 ---
-st.title("🍞 干啥啥都行")
+st.title("🍞 ")
 st.markdown("---")
 
 # 将打卡人选择直接放在主界面上，不再隐藏在侧边栏
@@ -147,4 +147,5 @@ with tab_admin:
         updated_df.to_csv(DATA_FILE, index=False)
         st.warning(f"ID {target_id} 已从记录中移除")
         st.rerun()
+
 
