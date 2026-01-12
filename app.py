@@ -13,7 +13,7 @@ if not os.path.exists(DATA_FILE):
     df.to_csv(DATA_FILE, index=False)
 
 # 2. 界面设计
-st.title("🍞 蓝溪 & 润姿自律契约")
+st.title("🍞 面包众筹组")
 
 user = st.selectbox("是谁在打卡？", ["刘蓝溪", "曾润姿"])
 
@@ -50,4 +50,5 @@ st.divider()
 st.subheader("📊 荣誉榜单 (20分换面包)")
 all_data = pd.read_csv(DATA_FILE)
 summary = all_data.groupby("打卡人")["积分"].sum().reset_index()
+
 st.table(summary)
