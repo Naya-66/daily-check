@@ -24,7 +24,7 @@ def get_data():
         # 如果读取出错（如列名不匹配），重新创建
         return pd.DataFrame(columns=["ID", "日期", "打卡人", "积分", "罚金", "详情", "兑换次数"])
 
-st.title("🍞 蓝溪 & 润姿自律打卡系统 V3.0")
+st.title("🍞 干啥啥都行")
 
 # --- 2. 打卡区域 ---
 with st.sidebar:
@@ -112,3 +112,4 @@ with tab2:
         df_new.to_csv(DATA_FILE, index=False)
         st.warning(f"ID {del_id} 已删除")
         st.rerun()
+
