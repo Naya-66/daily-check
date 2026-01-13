@@ -53,10 +53,9 @@ with st.form("checkin_form", clear_on_submit=True):
         # 2. 学习时长
         study_hours = st.number_input("2. 有效学习时长 (满3h+3 / 否则-3)", min_value=0.0, step=0.5)
         # 3. 体重管理达标判定
+         weight_kg = st.number_input("记录当日体重 (kg)", min_value=0.0, step=0.1)
         is_weight_ok = st.checkbox("3. 体重管理是否达标 (做到+1 / 否则-1)")
-        # 具体体重数值记录
-        weight_kg = st.number_input("记录当日体重 (kg)", min_value=0.0, step=0.1)
-
+       
     with col_daily:
         st.markdown("### 💧 今天多喝水了吗")
         water_cups = st.number_input("今日喝水杯数（不计入积分）", min_value=0, step=1)
@@ -158,6 +157,7 @@ with tab_admin:
         updated_df = all_data[all_data["ID"] != target_id]
         updated_df.to_csv(DATA_FILE, index=False)
         st.rerun()
+
 
 
 
