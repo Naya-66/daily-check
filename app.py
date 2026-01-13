@@ -26,7 +26,7 @@ st.title("🍞 干啥啥都行组自律系统 V8.0")
 st.markdown("---")
 
 # 第一步：选择打卡人
-st.subheader("👤 第一步：请选择身份")
+st.subheader("👤 第一步：谁在打卡")
 user = st.radio(
     "是谁在操作？", 
     ["刘蓝溪", "曾润姿"], 
@@ -153,4 +153,5 @@ with tab_admin:
         updated_df.to_csv(DATA_FILE, index=False)
         st.warning(f"ID {target_id} 已删除")
         st.rerun()
+
 
