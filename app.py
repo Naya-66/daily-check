@@ -37,7 +37,7 @@ user = st.radio(
 st.markdown("---")
 
 # 第二步：录入数据
-st.subheader("📝 第二步：录入数据（支持补打卡）")
+st.subheader("📝 第二步：录入数据")
 with st.form("checkin_form", clear_on_submit=True):
     # 新增：日期选择功能
     checkin_date = st.date_input("📅 选择打卡日期（默认为今天，补打卡请点击修改）", value=date.today())
@@ -153,3 +153,4 @@ with tab_admin:
         updated_df.to_csv(DATA_FILE, index=False)
         st.warning(f"ID {target_id} 已删除")
         st.rerun()
+
