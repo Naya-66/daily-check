@@ -26,40 +26,40 @@ def get_data():
         return pd.DataFrame(columns=["ID", "日期", "打卡人", "积分", "罚金", "详情", "兑换次数", "喝水杯数", "具体体重"])
 
 # --- 2. 界面头部 ---
-st.title("🍞 干啥啥都行组自律系统 V12.0")
+st.title("🍞 ")
 st.markdown("---")
 
 # 选择打卡人
-st.subheader("👤 第一步：请选择身份")
+st.subheader("👤who r u")
 user = st.radio("选择操作人：", ["刘蓝溪", "曾润姿"], horizontal=True, label_visibility="collapsed")
 st.markdown("---")
 
 # --- 3. 结构化打卡表单 ---
-st.subheader("📝 第二步：分类打卡录入")
+st.subheader("📝 check check")
 with st.form("checkin_form", clear_on_submit=True):
     checkin_date = st.date_input("📅 打卡日期", value=date.today())
     
     col_fine, col_score, col_daily = st.columns([1, 1.2, 1])
     
     with col_fine:
-        st.markdown("### 💸 罚款类")
+        st.markdown("### 💸 是否早睡")
         is_early = st.checkbox("昨晚 1:00 前睡觉 (未做到罚 2 元)")
         st.caption("注：早睡不计入积分")
 
     with col_score:
-        st.markdown("### ⭐ 积分类")
+        st.markdown("### ⭐ 来攒积分")
         # 1. 到工位时间
         arrival_time = st.time_input("1. 到工位时间 (11:00前+2 / 之后-2)", value=time(10, 0))
         # 2. 学习时长
         study_hours = st.number_input("2. 有效学习时长 (满3h+3 / 否则-3)", min_value=0.0, step=0.5)
         # 3. 体重管理达标判定
-        is_weight_ok = st.checkbox("3. 体重管理达标 (做到+1 / 否则-1)")
+        is_weight_ok = st.checkbox("3. 体重管理是否达标 (做到+1 / 否则-1)")
         # 具体体重数值记录
-        weight_kg = st.number_input("当前具体体重 (kg)", min_value=0.0, step=0.1)
+        weight_kg = st.number_input("记录当日体重 (kg)", min_value=0.0, step=0.1)
 
     with col_daily:
-        st.markdown("### 💧 日常类 (不计分)")
-        water_cups = st.number_input("今日喝水杯数", min_value=0, step=1)
+        st.markdown("### 💧 今天多喝水了吗")
+        water_cups = st.number_input("今日喝水杯数（不计入积分）", min_value=0, step=1)
         st.write("")
         st.write("✨ 保持水分，健康生活")
 
@@ -158,3 +158,4 @@ with tab_admin:
         updated_df = all_data[all_data["ID"] != target_id]
         updated_df.to_csv(DATA_FILE, index=False)
         st.rerun()
+
