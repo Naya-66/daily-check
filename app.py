@@ -26,11 +26,11 @@ def get_data():
         return pd.DataFrame(columns=["ID", "日期", "打卡人", "积分", "罚金", "详情", "兑换次数", "喝水杯数", "具体体重"])
 
 # --- 2. 界面头部 ---
-st.title("🍞 ")
+st.title("🍞 每日打卡")
 st.markdown("---")
 
 # 选择打卡人
-st.subheader("👤who r u")
+st.subheader("👤who are you")
 user = st.radio("选择操作人：", ["刘蓝溪", "曾润姿"], horizontal=True, label_visibility="collapsed")
 st.markdown("---")
 
@@ -158,4 +158,5 @@ with tab_admin:
         updated_df = all_data[all_data["ID"] != target_id]
         updated_df.to_csv(DATA_FILE, index=False)
         st.rerun()
+
 
