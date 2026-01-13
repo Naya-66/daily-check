@@ -31,7 +31,7 @@ st.markdown("---")
 
 # 选择打卡人
 st.subheader("👤who are you")
-user = st.radio("选择操作人：", ["刘蓝溪", "曾润姿"], horizontal=True, label_visibility="collapsed")
+user = st.radio("选择操作人：", ["溜溜", "吱吱"], horizontal=True, label_visibility="collapsed")
 st.markdown("---")
 
 # --- 3. 结构化打卡表单 ---
@@ -158,5 +158,6 @@ with tab_admin:
         updated_df = all_data[all_data["ID"] != target_id]
         updated_df.to_csv(DATA_FILE, index=False)
         st.rerun()
+
 
 
